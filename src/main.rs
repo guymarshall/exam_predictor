@@ -5,5 +5,5 @@
 // OUTPUT - the likelihood of topics (e.g. 4.2.4.1) coming up in the next exam
 
 fn main() {
-    println!("Hello, world!");
+    println!("Use .docx files instead of .pdf files (need converting maybe in this program?");
 }
