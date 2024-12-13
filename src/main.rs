@@ -1,4 +1,5 @@
 use pdf_extract::extract_text;
+use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;
@@ -24,9 +25,17 @@ fn parse_pdf_data(pdf_path: &PathBuf) {
         .filter(|line: &&str| line.matches('.').count() == 2 || line.matches('.').count() == 3)
         .collect();
 
-    decimal_lines
+    let counts: HashMap<&str, i32> = decimal_lines.iter().fold(
+        HashMap::new(),
+        |mut accumulator: HashMap<&str, i32>, pattern: &&str| {
+            *accumulator.entry(pattern).or_insert(0) += 1;
+            accumulator
+        },
+    );
+
+    counts
         .iter()
-        .for_each(|line: &&str| println!("{line}"));
+        .for_each(|(code, count): (&&str, &i32)| println!("{}: {}", code, count));
 }
 
 fn main() {
