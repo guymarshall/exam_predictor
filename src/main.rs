@@ -10,16 +10,15 @@ const DISALLOWED_CHARACTERS: [char; 55] = [
     'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '–', '/', ' ',
 ];
 
+const VALID_CHARACTERS: [char; 11] = ['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
 fn parse_pdf_data(pdf_path: &PathBuf) {
     let text: String = extract_text(pdf_path).unwrap();
 
     let decimal_lines: Vec<&str> = text
         .lines()
         .map(|line: &str| line.trim())
-        .filter(|line: &&str| {
-            line.to_string()
-                .contains(['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-        })
+        .filter(|line: &&str| line.contains(VALID_CHARACTERS))
         .filter(|line: &&str| !line.contains(DISALLOWED_CHARACTERS))
         .filter(|line: &&str| line.len() == 5 || line.len() == 7)
         .filter(|line: &&str| line.matches('.').count() == 2 || line.matches('.').count() == 3)
@@ -35,7 +34,12 @@ fn parse_pdf_data(pdf_path: &PathBuf) {
 
     counts
         .iter()
-        .for_each(|(code, count): (&&str, &i32)| println!("{}: {}", code, count));
+        .for_each(|item: (&&str, &i32)| println!("{:?}", item));
+
+    // get list of codes most present in the PDFs in order of count
+
+    // get specification and get full list of codes
+    // get list of codes not present in these PDFs
 }
 
 fn main() {
