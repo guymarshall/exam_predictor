@@ -32,11 +32,11 @@ fn parse_pdf_data(pdf_path: &PathBuf) {
         },
     );
 
-    counts
+    let mut sorted_counts: Vec<_> = counts.iter().collect();
+    sorted_counts.sort_by(|a: &(&&str, &i32), b: &(&&str, &i32)| b.1.cmp(a.1));
+    sorted_counts
         .iter()
-        .for_each(|item: (&&str, &i32)| println!("{:?}", item));
-
-    // get list of codes most present in the PDFs in order of count
+        .for_each(|count: &(&&str, &i32)| println!("{:?}", count));
 
     // get specification and get full list of codes
     // get list of codes not present in these PDFs
