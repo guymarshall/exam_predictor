@@ -1,6 +1,6 @@
 use core::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum Subject {
     BiologyTriple,
     ChemistryTriple,
@@ -31,5 +31,16 @@ fn get_subject(code: i32) -> Subject {
         8463 => Subject::PhysicsTriple,
         8464 => Subject::CombinedScience,
         _ => panic!("Invalid subject code"),
+    }
+}
+
+impl Subject {
+    pub(crate) fn get_code(&self) -> i32 {
+        match self {
+            Subject::BiologyTriple => 8461,
+            Subject::ChemistryTriple => 8462,
+            Subject::PhysicsTriple => 8463,
+            Subject::CombinedScience => 8464,
+        }
     }
 }

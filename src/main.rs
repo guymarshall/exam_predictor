@@ -10,25 +10,39 @@ use subject::{extract_subject_from_filename, Subject};
 use test_pdf::TestPDF;
 
 fn main() {
-    // TODO: do this for each subject individually
-    let filenames: Vec<String> = get_pdf_filenames("tests");
-
-    // TODO: for each subject -> get full list of codes from specifications
-    // TODO: for each subject -> get list of codes that are missing from the PDFs
-
-    let mut test_pdfs: Vec<TestPDF> = vec![];
-    filenames.into_iter().for_each(|filename: String| {
-        println!("Parsing data from {:?}", filename);
-        let subject: Subject = extract_subject_from_filename(&filename);
-        let codes: Vec<String> = get_codes(&filename);
-        let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
-        let test_pdf: TestPDF = TestPDF::new(filename, subject, codes, current_code_counts);
-        test_pdfs.push(test_pdf);
-    });
-
-    test_pdfs
+    let subjects: Vec<Subject> = get_pdf_filenames("specifications")
         .iter()
-        .for_each(|test_pdf: &TestPDF| println!("{}", test_pdf));
+        .map(|filename: &String| extract_subject_from_filename(filename))
+        .collect();
 
-    // TODO: write list of codes in descending order to file for each subject e.g. biology.txt
+    subjects.iter().for_each(|subject: &Subject| {
+        let code: i32 = subject.get_code();
+        let filenames: Vec<String> = get_pdf_filenames("tests")
+            .into_iter()
+            .filter(|filename: &String| filename.contains(&code.to_string()))
+            .collect();
+
+        if !filenames.is_empty() {
+            println!("Subject: {subject}");
+        }
+
+        // TODO: for each subject -> get full list of codes from specifications
+        // TODO: for each subject -> get list of codes that are missing from the PDFs
+
+        let test_pdfs: Vec<TestPDF> = filenames
+            .into_iter()
+            .map(|filename: String| {
+                println!("Parsing data from {:?}", filename);
+                let codes: Vec<String> = get_codes(&filename);
+                let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
+                TestPDF::new(filename, subject.clone(), codes, current_code_counts)
+            })
+            .collect();
+
+        test_pdfs
+            .iter()
+            .for_each(|test_pdf: &TestPDF| println!("{}", test_pdf));
+
+        // TODO: write list of codes in descending order to file for each subject e.g. biology.txt
+    });
 }
