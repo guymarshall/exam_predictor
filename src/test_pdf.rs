@@ -26,15 +26,15 @@ impl TestPDF {
 }
 
 impl fmt::Display for TestPDF {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
-            f,
+            formatter,
             "Filename: {}\nSubject: {}\nCodes: {:?}\nCode Counts:\n",
             self.filename, self.subject, self.codes
         )?;
 
         for (code, count) in &self.code_counts {
-            writeln!(f, "  {}: {}", code, count)?;
+            writeln!(formatter, "  {}: {}", code, count)?;
         }
         Ok(())
     }

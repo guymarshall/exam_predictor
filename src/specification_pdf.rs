@@ -19,9 +19,9 @@ impl SpecificationPDF {
 }
 
 impl fmt::Display for SpecificationPDF {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
-            f,
+            formatter,
             "Filename: {}\nSubject: {}\nCodes: {:?}\n",
             self.filename, self.subject, self.codes
         )?;
