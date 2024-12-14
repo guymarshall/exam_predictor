@@ -1,8 +1,13 @@
+mod pdf;
+mod subject;
+
+use pdf::TestPDF;
 use pdf_extract::extract_text;
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;
+use subject::{extract_subject_from_filename, Subject};
 
 const DISALLOWED_CHARACTERS: [char; 55] = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
@@ -12,45 +17,62 @@ const DISALLOWED_CHARACTERS: [char; 55] = [
 
 const VALID_CHARACTERS: [char; 11] = ['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-fn parse_pdf_data(pdf_path: &PathBuf) {
-    let text: String = extract_text(pdf_path).unwrap();
+const TESTS_DIRECTORY: &str = "tests";
 
-    let decimal_lines: Vec<&str> = text
+fn get_codes(filename: &String) -> Vec<String> {
+    let text: String = extract_text(filename).unwrap();
+
+    let codes: Vec<String> = text
         .lines()
-        .map(|line: &str| line.trim())
-        .filter(|line: &&str| line.contains(VALID_CHARACTERS))
-        .filter(|line: &&str| !line.contains(DISALLOWED_CHARACTERS))
-        .filter(|line: &&str| line.len() == 5 || line.len() == 7)
-        .filter(|line: &&str| line.matches('.').count() == 2 || line.matches('.').count() == 3)
+        .map(|line: &str| line.trim().to_string())
+        .filter(|line: &String| line.contains(VALID_CHARACTERS))
+        .filter(|line: &String| !line.contains(DISALLOWED_CHARACTERS))
+        .filter(|line: &String| line.len() == 5 || line.len() == 7)
+        .filter(|line: &String| line.matches('.').count() == 2 || line.matches('.').count() == 3)
         .collect();
 
-    let counts: HashMap<&str, i32> = decimal_lines.iter().fold(
+    codes
+}
+
+fn get_code_counts(codes: &[String]) -> Vec<(String, i32)> {
+    let counts: HashMap<String, i32> = codes.iter().fold(
         HashMap::new(),
-        |mut accumulator: HashMap<&str, i32>, pattern: &&str| {
-            *accumulator.entry(pattern).or_insert(0) += 1;
+        |mut accumulator: HashMap<String, i32>, pattern: &String| {
+            *accumulator.entry(pattern.to_string()).or_insert(0) += 1;
             accumulator
         },
     );
 
-    let mut sorted_counts: Vec<_> = counts.iter().collect();
-    sorted_counts.sort_by(|a: &(&&str, &i32), b: &(&&str, &i32)| b.1.cmp(a.1));
+    let mut sorted_counts: Vec<_> = counts.into_iter().collect();
+    sorted_counts.sort_by(|a: &(String, i32), b: &(String, i32)| b.1.cmp(&a.1));
     sorted_counts
-        .iter()
-        .for_each(|count: &(&&str, &i32)| println!("{:?}", count));
-
-    // get specification and get full list of codes
-    // get list of codes not present in these PDFs
 }
 
 fn main() {
-    let pdfs: Vec<PathBuf> = fs::read_dir("DO_NOT_COMMIT")
+    // TODO: do this for each subject individually
+    let filenames: Vec<PathBuf> = fs::read_dir(TESTS_DIRECTORY)
         .unwrap()
         .map(|file: Result<fs::DirEntry, std::io::Error>| file.unwrap().path())
         .filter(|path: &PathBuf| path.extension() == Some(OsStr::new("pdf")))
         .collect();
 
-    pdfs.iter().for_each(|pdf: &PathBuf| {
-        println!("Parsing data from {:?}", pdf);
-        parse_pdf_data(pdf);
+    // TODO: for each subject -> get full list of codes from specifications
+    // TODO: for each subject -> get list of codes that are missing from the PDFs
+
+    let mut test_pdfs: Vec<TestPDF> = vec![];
+    filenames.iter().for_each(|filename: &PathBuf| {
+        println!("Parsing data from {:?}", filename);
+        let filename: String = filename.to_string_lossy().to_string();
+        let subject: Subject = extract_subject_from_filename(&filename);
+        let codes: Vec<String> = get_codes(&filename);
+        let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
+        let test_pdf: TestPDF = TestPDF::new(filename, subject, codes, current_code_counts);
+        test_pdfs.push(test_pdf);
     });
+
+    test_pdfs
+        .iter()
+        .for_each(|test_pdf: &TestPDF| println!("{}", test_pdf));
+
+    // TODO: write list of codes in descending order to file for each subject e.g. biology.txt
 }
