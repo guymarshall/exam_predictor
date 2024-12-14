@@ -51,19 +51,19 @@ fn get_code_counts(codes: &[String]) -> Vec<(String, i32)> {
 
 fn main() {
     // TODO: do this for each subject individually
-    let filenames: Vec<PathBuf> = fs::read_dir(TESTS_DIRECTORY)
+    let filenames: Vec<String> = fs::read_dir(TESTS_DIRECTORY)
         .unwrap()
         .map(|file: Result<fs::DirEntry, std::io::Error>| file.unwrap().path())
         .filter(|path: &PathBuf| path.extension() == Some(OsStr::new("pdf")))
+        .map(|path: PathBuf| path.to_string_lossy().to_string())
         .collect();
 
     // TODO: for each subject -> get full list of codes from specifications
     // TODO: for each subject -> get list of codes that are missing from the PDFs
 
     let mut test_pdfs: Vec<TestPDF> = vec![];
-    filenames.iter().for_each(|filename: &PathBuf| {
+    filenames.into_iter().for_each(|filename: String| {
         println!("Parsing data from {:?}", filename);
-        let filename: String = filename.to_string_lossy().to_string();
         let subject: Subject = extract_subject_from_filename(&filename);
         let codes: Vec<String> = get_codes(&filename);
         let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
