@@ -1,23 +1,17 @@
 mod codes;
+mod file_reader;
 mod specification_pdf;
 mod subject;
 mod test_pdf;
 
 use codes::{get_code_counts, get_codes};
-use std::ffi::OsStr;
-use std::fs;
-use std::path::PathBuf;
+use file_reader::get_pdf_filenames;
 use subject::{extract_subject_from_filename, Subject};
 use test_pdf::TestPDF;
 
 fn main() {
     // TODO: do this for each subject individually
-    let filenames: Vec<String> = fs::read_dir("tests")
-        .unwrap()
-        .map(|file: Result<fs::DirEntry, std::io::Error>| file.unwrap().path())
-        .filter(|path: &PathBuf| path.extension() == Some(OsStr::new("pdf")))
-        .map(|path: PathBuf| path.to_string_lossy().to_string())
-        .collect();
+    let filenames: Vec<String> = get_pdf_filenames("tests");
 
     // TODO: for each subject -> get full list of codes from specifications
     // TODO: for each subject -> get list of codes that are missing from the PDFs
