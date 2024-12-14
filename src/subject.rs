@@ -5,6 +5,7 @@ pub(crate) enum Subject {
     BiologyTriple,
     ChemistryTriple,
     PhysicsTriple,
+    CombinedScience,
 }
 
 impl fmt::Display for Subject {
@@ -28,6 +29,7 @@ fn get_subject(code: i32) -> Subject {
         8461 => Subject::BiologyTriple,
         8462 => Subject::ChemistryTriple,
         8463 => Subject::PhysicsTriple,
+        8464 => Subject::CombinedScience,
         _ => panic!("Invalid subject code"),
     }
 }
