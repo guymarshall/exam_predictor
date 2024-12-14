@@ -39,8 +39,3 @@ impl fmt::Display for TestPDF {
         Ok(())
     }
 }
-
-pub(crate) struct SpecificationPDF {
-    filename: String,
-    codes: Vec<String>,
-}

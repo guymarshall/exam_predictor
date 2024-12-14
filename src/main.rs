@@ -1,13 +1,14 @@
-mod pdf;
+mod specification_pdf;
 mod subject;
+mod test_pdf;
 
-use pdf::TestPDF;
 use pdf_extract::extract_text;
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;
 use subject::{extract_subject_from_filename, Subject};
+use test_pdf::TestPDF;
 
 const DISALLOWED_CHARACTERS: [char; 55] = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
