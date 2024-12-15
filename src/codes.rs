@@ -11,7 +11,7 @@ const DISALLOWED_CHARACTERS: [char; 55] = [
 const VALID_CHARACTERS: [char; 11] = ['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 pub(crate) fn get_codes(filename: &String) -> Vec<String> {
-    let text: String = extract_text(filename).unwrap();
+    let text: String = extract_text(filename).expect("Failed to open PDF");
 
     let codes: Vec<String> = text
         .lines()

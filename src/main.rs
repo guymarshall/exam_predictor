@@ -33,7 +33,7 @@ fn main() {
             .into_iter()
             .filter(|filename: &String| filename.contains(&code.to_string()))
             .last()
-            .unwrap();
+            .expect("Failed to get last filename");
         ////! ERROR in crate: PdfError(Decryption(UnsupportedEncryption)) for specifications due to PDF-1.7 format being used. PDF-1.6 format works fine.
         // let specification_codes: Vec<String> = get_codes(&specification_filename);
         // let specification_pdf: SpecificationPDF =
