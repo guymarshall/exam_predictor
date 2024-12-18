@@ -34,18 +34,23 @@ fn main() {
             .filter(|filename: &String| filename.contains(&code.to_string()))
             .last()
             .expect("Failed to get last filename");
-        ////! ERROR in crate: PdfError(Decryption(UnsupportedEncryption)) for specifications due to PDF-1.7 format being used. PDF-1.6 format works fine.
-        // let specification_codes: Vec<String> = get_codes(&specification_filename);
-        // let specification_pdf: SpecificationPDF =
-        //     SpecificationPDF::new(specification_filename, subject.clone(), specification_codes);
-        // TODO: for each subject -> get list of codes that are missing from the PDFs
+        let specification_codes: Vec<String> = get_codes(&specification_filename);
+        let specification: Specification =
+            Specification::new(specification_filename, subject.clone(), specification_codes);
         let test_pdfs: Vec<TestPDF> = filenames
             .into_iter()
             .map(|filename: String| {
                 println!("Parsing data from {:?}", filename);
                 let codes: Vec<String> = get_codes(&filename);
                 let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
-                TestPDF::new(filename, subject.clone(), codes, current_code_counts)
+                let missing_codes: Vec<String> = specification.get_missing_codes(&codes);
+                TestPDF::new(
+                    filename,
+                    subject.clone(),
+                    codes,
+                    current_code_counts,
+                    missing_codes,
+                )
             })
             .collect();
 
