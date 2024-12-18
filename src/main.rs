@@ -1,17 +1,17 @@
 mod codes;
 mod file_reader;
-mod specification_pdf;
+mod specification;
 mod subject;
 mod test_pdf;
 
 use codes::{get_code_counts, get_codes};
-use file_reader::get_pdf_filenames;
-use specification_pdf::SpecificationPDF;
+use file_reader::get_filenames;
+use specification::Specification;
 use subject::{extract_subject_from_filename, Subject};
 use test_pdf::TestPDF;
 
 fn main() {
-    let specification_filenames: Vec<String> = get_pdf_filenames("specifications");
+    let specification_filenames: Vec<String> = get_filenames("specifications", "txt");
     let subjects: Vec<Subject> = specification_filenames
         .iter()
         .map(|filename: &String| extract_subject_from_filename(filename))
@@ -19,7 +19,7 @@ fn main() {
 
     for subject in subjects {
         let code: i32 = subject.get_code();
-        let filenames: Vec<String> = get_pdf_filenames("tests")
+        let filenames: Vec<String> = get_filenames("tests", "pdf")
             .into_iter()
             .filter(|filename: &String| filename.contains(&code.to_string()))
             .collect();
