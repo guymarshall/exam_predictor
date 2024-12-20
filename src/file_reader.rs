@@ -1,4 +1,6 @@
 use std::{ffi::OsStr, fs, path::PathBuf};
+use std::fs::File;
+use std::io::Read;
 
 pub(crate) fn get_filenames(path: &str, extension: &str) -> Vec<String> {
     let filenames: Vec<String> = fs::read_dir(path)
@@ -13,4 +15,11 @@ pub(crate) fn get_filenames(path: &str, extension: &str) -> Vec<String> {
         .map(|path: PathBuf| path.to_string_lossy().to_string())
         .collect();
     filenames
+}
+
+pub(crate) fn extract_text_from_txt(filename: &str) -> String {
+    let mut file = File::open(filename).expect("Failed to open file");
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).expect("Failed to read file");
+    contents
 }

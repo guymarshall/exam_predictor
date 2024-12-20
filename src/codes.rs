@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use pdf_extract::extract_text;
+use crate::file_reader::extract_text_from_txt;
 
 const DISALLOWED_CHARACTERS: [char; 55] = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
@@ -11,7 +12,13 @@ const DISALLOWED_CHARACTERS: [char; 55] = [
 const VALID_CHARACTERS: [char; 11] = ['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 pub(crate) fn get_codes(filename: &String) -> Vec<String> {
-    let text: String = extract_text(filename).expect("Failed to open PDF");
+    let extension: &str = filename.split(".").last().unwrap();
+
+    let text: String = match extension {
+        "pdf" => extract_text(filename).expect("Failed to open PDF"),
+        "txt" => extract_text_from_txt(filename),
+        _ => panic!("Invalid extension"),
+    };
 
     let codes: Vec<String> = text
         .lines()
