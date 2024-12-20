@@ -54,6 +54,8 @@ fn main() {
             })
             .collect();
 
+        // TODO: remove duplicate codes
+
         test_pdfs
             .iter()
             .for_each(|test_pdf: &TestPDF| println!("{}", test_pdf));

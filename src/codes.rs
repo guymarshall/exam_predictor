@@ -3,13 +3,7 @@ use std::collections::HashMap;
 use pdf_extract::extract_text;
 use crate::file_reader::extract_text_from_txt;
 
-const DISALLOWED_CHARACTERS: [char; 55] = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-    't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-    'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '–', '/', ' ',
-];
-
-const VALID_CHARACTERS: [char; 11] = ['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const VALID_CHARACTERS: [char; 10] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 pub(crate) fn get_codes(filename: &String) -> Vec<String> {
     let extension: &str = filename.split(".").last().unwrap();
@@ -23,8 +17,9 @@ pub(crate) fn get_codes(filename: &String) -> Vec<String> {
     let codes: Vec<String> = text
         .lines()
         .map(|line: &str| line.trim().to_string())
+        .filter(|line: &String| line.contains("."))
         .filter(|line: &String| line.contains(VALID_CHARACTERS))
-        .filter(|line: &String| !line.contains(DISALLOWED_CHARACTERS))
+        .map(|line: String| line.split_whitespace().next().unwrap().to_string()) // remove leading titles from specification codes
         .filter(|line: &String| line.len() == 5 || line.len() == 7)
         .filter(|line: &String| line.matches('.').count() == 2 || line.matches('.').count() == 3)
         .collect();
