@@ -1,40 +1,12 @@
-use core::fmt;
+use crate::codes::remove_title_from_code;
 
-use crate::{codes::remove_title_from_code, subject::Subject};
-
-pub(crate) struct Specification {
-    filename: String,
-    subject: Subject,
-    codes: Vec<String>,
-}
-
-impl Specification {
-    pub(crate) fn new(filename: String, subject: Subject, codes: Vec<String>) -> Specification {
-        Specification {
-            filename,
-            subject,
-            codes,
-        }
-    }
-}
-
-impl fmt::Display for Specification {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            formatter,
-            "Filename: {}\nSubject: {}\nCodes: {:?}\n",
-            self.filename, self.subject, self.codes
-        )?;
-        Ok(())
-    }
-}
-
-impl Specification {
-    pub(crate) fn get_missing_codes(&self, codes: &[String]) -> Vec<String> {
-        self.codes
-            .iter()
-            .filter(|code: &&String| !codes.contains(&remove_title_from_code(code)))
-            .cloned()
-            .collect()
-    }
+pub(crate) fn get_missing_codes(
+    specification_codes: &[String],
+    test_codes: &[String],
+) -> Vec<String> {
+    specification_codes
+        .iter()
+        .filter(|code: &&String| !test_codes.contains(&remove_title_from_code(code)))
+        .cloned()
+        .collect()
 }

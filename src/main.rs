@@ -6,7 +6,7 @@ mod test_pdf;
 
 use codes::{get_code_counts, get_codes};
 use file_reader::get_filenames;
-use specification::Specification;
+use specification::get_missing_codes;
 use subject::{extract_subject_from_filename, Subject};
 use test_pdf::TestPDF;
 
@@ -39,26 +39,26 @@ fn main() {
         let mut specification_codes: Vec<String> = get_codes(&specification_filename);
         specification_codes.sort();
         specification_codes.dedup();
-        let specification: Specification =
-            Specification::new(specification_filename, subject.clone(), specification_codes);
+
         let test_pdfs: Vec<TestPDF> = filenames
             .into_iter()
             .map(|filename: String| {
                 println!("Parsing data from {:?}", filename);
-                let mut codes: Vec<String> = get_codes(&filename);
-                codes.sort();
-                codes.dedup();
+                let mut test_codes: Vec<String> = get_codes(&filename);
+                test_codes.sort();
+                test_codes.dedup();
 
-                let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
-                let mut missing_codes: Vec<String> = specification.get_missing_codes(&codes);
+                let code_counts: Vec<(String, i32)> = get_code_counts(&test_codes);
+                let mut missing_codes: Vec<String> =
+                    get_missing_codes(&specification_codes, &test_codes);
                 missing_codes.sort();
                 missing_codes.dedup();
 
                 TestPDF::new(
                     filename,
                     subject.clone(),
-                    codes,
-                    current_code_counts,
+                    test_codes,
+                    code_counts,
                     missing_codes,
                 )
             })
