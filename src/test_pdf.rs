@@ -32,7 +32,7 @@ impl fmt::Display for TestPDF {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             formatter,
-            "Filename: {}\nSubject: {}\nCodes: {:?}\nCode Counts:\nMissing Codes: {:?}\n",
+            "Filename: {}\nSubject: {}\nCodes: {:?}\nMissing Codes: {:?}\n",
             self.filename, self.subject, self.codes, self.missing_codes
         )?;
 

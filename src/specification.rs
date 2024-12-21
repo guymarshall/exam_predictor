@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::subject::Subject;
+use crate::{codes::remove_title_from_code, subject::Subject};
 
 pub(crate) struct Specification {
     filename: String,
@@ -33,7 +33,7 @@ impl Specification {
     pub(crate) fn get_missing_codes(&self, codes: &[String]) -> Vec<String> {
         self.codes
             .iter()
-            .filter(|code: &&String| !codes.contains(code))
+            .filter(|code: &&String| !codes.contains(&remove_title_from_code(code)))
             .cloned()
             .collect()
     }

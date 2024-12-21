@@ -24,9 +24,11 @@ fn main() {
             .filter(|filename: &String| filename.contains(&code.to_string()))
             .collect();
 
-        if !filenames.is_empty() {
-            println!("Subject: {subject}");
+        if filenames.is_empty() {
+            continue;
         }
+
+        println!("Subject: {subject}");
 
         let specification_filename: String = specification_filenames
             .clone()
@@ -41,9 +43,11 @@ fn main() {
             .into_iter()
             .map(|filename: String| {
                 println!("Parsing data from {:?}", filename);
-                let codes: Vec<String> = get_codes(&filename);
+                let mut codes: Vec<String> = get_codes(&filename);
+                codes.sort();
                 let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
-                let missing_codes: Vec<String> = specification.get_missing_codes(&codes);
+                let mut missing_codes: Vec<String> = specification.get_missing_codes(&codes);
+                missing_codes.sort();
                 TestPDF::new(
                     filename,
                     subject.clone(),
