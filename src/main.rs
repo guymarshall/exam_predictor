@@ -36,7 +36,9 @@ fn main() {
             .filter(|filename: &String| filename.contains(&code.to_string()))
             .last()
             .expect("Failed to get last filename");
-        let specification_codes: Vec<String> = get_codes(&specification_filename);
+        let mut specification_codes: Vec<String> = get_codes(&specification_filename);
+        specification_codes.sort();
+        specification_codes.dedup();
         let specification: Specification =
             Specification::new(specification_filename, subject.clone(), specification_codes);
         let test_pdfs: Vec<TestPDF> = filenames
@@ -45,9 +47,13 @@ fn main() {
                 println!("Parsing data from {:?}", filename);
                 let mut codes: Vec<String> = get_codes(&filename);
                 codes.sort();
+                codes.dedup();
+
                 let current_code_counts: Vec<(String, i32)> = get_code_counts(&codes);
                 let mut missing_codes: Vec<String> = specification.get_missing_codes(&codes);
                 missing_codes.sort();
+                missing_codes.dedup();
+
                 TestPDF::new(
                     filename,
                     subject.clone(),
@@ -57,8 +63,6 @@ fn main() {
                 )
             })
             .collect();
-
-        // TODO: remove duplicate codes
 
         test_pdfs
             .iter()
