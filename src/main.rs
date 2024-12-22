@@ -18,13 +18,13 @@ fn main() {
         .collect();
 
     for subject in subjects {
-        let code: i32 = subject.get_code();
-        let filenames: Vec<String> = get_filenames("tests", "pdf")
+        let subject_code: i32 = subject.get_code();
+        let subject_filenames: Vec<String> = get_filenames("tests", "pdf")
             .into_iter()
-            .filter(|filename: &String| filename.contains(&code.to_string()))
+            .filter(|filename: &String| filename.contains(&subject_code.to_string()))
             .collect();
 
-        if filenames.is_empty() {
+        if subject_filenames.is_empty() {
             continue;
         }
 
@@ -33,18 +33,18 @@ fn main() {
         let specification_filename: String = specification_filenames
             .clone()
             .into_iter()
-            .filter(|filename: &String| filename.contains(&code.to_string()))
+            .filter(|filename: &String| filename.contains(&subject_code.to_string()))
             .last()
             .expect("Failed to get last filename");
         let mut specification_codes: Vec<String> = get_codes(&specification_filename);
         specification_codes.sort();
         specification_codes.dedup();
 
-        let test_pdfs: Vec<TestPDF> = filenames
+        let test_pdfs: Vec<TestPDF> = subject_filenames
             .into_iter()
-            .map(|filename: String| {
-                println!("Parsing data from {:?}", filename);
-                let mut test_codes: Vec<String> = get_codes(&filename);
+            .map(|subject_filename: String| {
+                println!("Parsing data from {:?}", subject_filename);
+                let mut test_codes: Vec<String> = get_codes(&subject_filename);
                 test_codes.sort();
                 test_codes.dedup();
 
@@ -55,7 +55,7 @@ fn main() {
                 missing_codes.dedup();
 
                 TestPDF::new(
-                    filename,
+                    subject_filename,
                     subject.clone(),
                     test_codes,
                     code_counts,
