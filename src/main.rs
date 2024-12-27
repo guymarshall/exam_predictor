@@ -1,11 +1,13 @@
 mod codes;
 mod file_reader;
+mod file_writer;
 mod specification;
 mod subject;
 mod test_pdf;
 
 use codes::{get_code_counts, get_codes};
 use file_reader::get_filenames;
+use file_writer::write_to_file;
 use specification::get_missing_codes;
 use subject::{extract_subject_from_filename, Subject};
 use test_pdf::TestPDF;
@@ -46,7 +48,6 @@ fn main() {
                 println!("Parsing data from {:?}", subject_filename);
                 let mut test_codes: Vec<String> = get_codes(&subject_filename);
                 test_codes.sort();
-                test_codes.dedup();
 
                 let code_counts: Vec<(String, i32)> = get_code_counts(&test_codes);
                 let mut missing_codes: Vec<String> =
@@ -66,8 +67,6 @@ fn main() {
 
         test_pdfs
             .iter()
-            .for_each(|test_pdf: &TestPDF| println!("{}", test_pdf));
-
-        // TODO: write list of codes in descending order to file for each subject e.g. biology.txt
+            .for_each(|test_pdf: &TestPDF| write_to_file(test_pdf));
     }
 }
