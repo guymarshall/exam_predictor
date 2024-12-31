@@ -6,7 +6,7 @@ mod subject;
 mod test_pdf;
 
 use codes::{get_code_counts, get_codes};
-use file_reader::get_filenames;
+use file_reader::{get_filenames, get_subject_specific_filenames};
 use file_writer::write_to_file;
 use specification::get_missing_codes;
 use subject::{get_subjects_from_filenames, Subject};
@@ -18,10 +18,8 @@ fn main() {
 
     for subject in subjects {
         let subject_code: i32 = subject.get_code();
-        let subject_filenames: Vec<String> = get_filenames("tests", "pdf")
-            .into_iter()
-            .filter(|filename: &String| filename.contains(&subject_code.to_string()))
-            .collect();
+        let subject_filenames: Vec<String> =
+            get_subject_specific_filenames("tests", "pdf", subject_code);
 
         if subject_filenames.is_empty() {
             continue;
