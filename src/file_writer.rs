@@ -3,6 +3,14 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
+fn strip_directory_and_extension(filename: &str) -> &str {
+    filename
+        .strip_suffix(".pdf")
+        .unwrap()
+        .strip_prefix("tests/")
+        .unwrap()
+}
+
 pub(crate) fn write_to_file(test_pdf: &TestPDF) {
     const OUTPUT_DIRECTORY: &str = "output/";
 
@@ -12,22 +20,12 @@ pub(crate) fn write_to_file(test_pdf: &TestPDF) {
 
     let filepath: PathBuf = Path::new(OUTPUT_DIRECTORY).join(format!(
         "{}.txt",
-        test_pdf
-            .filename
-            .strip_suffix(".pdf")
-            .unwrap()
-            .strip_prefix("tests/")
-            .unwrap()
+        strip_directory_and_extension(&test_pdf.filename)
     ));
 
     println!(
         "Writing to: {}.txt",
-        test_pdf
-            .filename
-            .strip_suffix(".pdf")
-            .unwrap()
-            .strip_prefix("tests/")
-            .unwrap()
+        strip_directory_and_extension(&test_pdf.filename)
     );
 
     let mut file: File = match File::create(&filepath) {
@@ -40,12 +38,7 @@ pub(crate) fn write_to_file(test_pdf: &TestPDF) {
     if writeln!(
         file,
         "{}: {}",
-        test_pdf
-            .filename
-            .strip_suffix(".pdf")
-            .unwrap()
-            .strip_prefix("tests/")
-            .unwrap(),
+        strip_directory_and_extension(&test_pdf.filename),
         test_pdf.subject
     )
     .is_err()
