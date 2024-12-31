@@ -6,9 +6,9 @@ use std::path::{Path, PathBuf};
 fn strip_directory_and_extension(filename: &str) -> &str {
     filename
         .strip_suffix(".pdf")
-        .unwrap()
+        .expect("Failed to strip pdf suffix")
         .strip_prefix("tests/")
-        .unwrap()
+        .expect("Failed to strip tests prefix")
 }
 
 pub(crate) fn write_to_file(test_pdf: &TestPDF) {
