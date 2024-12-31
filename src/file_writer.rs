@@ -23,11 +23,6 @@ pub(crate) fn write_to_file(test_pdf: &TestPDF) {
         strip_directory_and_extension(&test_pdf.filename)
     ));
 
-    println!(
-        "Writing to: {}.txt",
-        strip_directory_and_extension(&test_pdf.filename)
-    );
-
     let mut file: File = match File::create(&filepath) {
         Ok(f) => f,
         Err(e) => {
