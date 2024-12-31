@@ -15,13 +15,20 @@ impl fmt::Display for Subject {
     }
 }
 
-pub(crate) fn extract_subject_from_filename(filename: &str) -> Subject {
+fn extract_subject_from_filename(filename: &str) -> Subject {
     for word in filename.split(|c: char| !c.is_numeric()) {
         if let Ok(code) = word.parse::<i32>() {
             return get_subject(code);
         }
     }
     panic!("No valid subject code found in filename");
+}
+
+pub(crate) fn get_subjects_from_filenames(specification_filenames: &[String]) -> Vec<Subject> {
+    specification_filenames
+        .iter()
+        .map(|filename: &String| extract_subject_from_filename(filename))
+        .collect()
 }
 
 fn get_subject(code: i32) -> Subject {

@@ -9,15 +9,12 @@ use codes::{get_code_counts, get_codes};
 use file_reader::get_filenames;
 use file_writer::write_to_file;
 use specification::get_missing_codes;
-use subject::{extract_subject_from_filename, Subject};
+use subject::{get_subjects_from_filenames, Subject};
 use test_pdf::TestPDF;
 
 fn main() {
     let specification_filenames: Vec<String> = get_filenames("specifications", "txt");
-    let subjects: Vec<Subject> = specification_filenames
-        .iter()
-        .map(|filename: &String| extract_subject_from_filename(filename))
-        .collect();
+    let subjects: Vec<Subject> = get_subjects_from_filenames(&specification_filenames);
 
     for subject in subjects {
         let subject_code: i32 = subject.get_code();
