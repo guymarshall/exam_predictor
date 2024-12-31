@@ -8,7 +8,7 @@ mod test_pdf;
 use codes::{get_code_counts, get_codes};
 use file_reader::{get_filenames, get_subject_specific_filenames};
 use file_writer::write_to_file;
-use specification::get_missing_codes;
+use specification::{get_missing_codes, get_subject_specific_specification_filename};
 use subject::{get_subjects_from_filenames, Subject};
 use test_pdf::TestPDF;
 
@@ -27,12 +27,8 @@ fn main() {
 
         println!("Subject: {subject}");
 
-        let specification_filename: String = specification_filenames
-            .clone()
-            .into_iter()
-            .filter(|filename: &String| filename.contains(&subject_code.to_string()))
-            .last()
-            .expect("Failed to get last filename");
+        let specification_filename: String =
+            get_subject_specific_specification_filename(&specification_filenames, subject_code);
         let mut specification_codes: Vec<String> = get_codes(&specification_filename);
         specification_codes.sort();
         specification_codes.dedup();
