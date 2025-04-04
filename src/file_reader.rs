@@ -31,8 +31,8 @@ pub(crate) fn get_subject_specific_filenames(
 }
 
 pub(crate) fn extract_text_from_txt(filename: &str) -> String {
-    let mut file = File::open(filename).expect("Failed to open file");
-    let mut contents = String::new();
+    let mut file: File = File::open(filename).expect("Failed to open file");
+    let mut contents: String = String::new();
     file.read_to_string(&mut contents)
         .expect("Failed to read file");
     contents
