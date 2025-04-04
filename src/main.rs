@@ -8,6 +8,7 @@ mod test_pdf;
 use codes::{get_code_counts, get_codes};
 use file_reader::{get_filenames, get_subject_specific_filenames};
 use file_writer::write_to_file;
+use rayon::prelude::*;
 use specification::{get_missing_codes, get_subject_specific_specification_filename};
 use subject::{get_subjects_from_filenames, Subject};
 use test_pdf::TestPDF;
@@ -34,7 +35,7 @@ fn main() {
         specification_codes.dedup();
 
         let test_pdfs: Vec<TestPDF> = subject_filenames
-            .into_iter()
+            .into_par_iter()
             .map(|subject_filename: String| {
                 println!("Parsing data from {:?}", subject_filename);
                 let mut test_codes: Vec<String> = get_codes(&subject_filename);
