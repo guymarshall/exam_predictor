@@ -18,7 +18,7 @@ pub(crate) fn get_subject_specific_specification_filename(
     let specification_filename: String = specification_filenames
         .iter()
         .filter(|filename: &&String| filename.contains(&subject_code.to_string()))
-        .last()
+        .next_back()
         .expect("Failed to get last filename")
         .to_string();
     specification_filename
