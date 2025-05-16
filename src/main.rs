@@ -13,6 +13,7 @@ use specification::{get_missing_codes, get_subject_specific_specification_filena
 use subject::{get_subjects_from_filenames, Subject};
 use test_pdf::TestPDF;
 
+// TODO: this still uses the .txt files somehow, this needs fixing
 fn main() {
     let specification_filenames: Vec<String> = get_filenames("specifications", "txt");
     let subjects: Vec<Subject> = get_subjects_from_filenames(&specification_filenames);
