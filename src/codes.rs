@@ -1,27 +1,17 @@
 use std::collections::HashMap;
 
-use crate::file_reader::extract_text_from_txt;
 use pdf_extract::extract_text;
 use regex::Regex;
 
-#[derive(Debug, PartialEq)]
-enum Extension {
-    Pdf,
-    Txt,
-}
-
-fn get_text(extension: &Extension, filename: &String) -> String {
-    match extension {
-        Extension::Pdf => extract_text(filename).expect("Failed to open PDF"),
-        Extension::Txt => extract_text_from_txt(filename),
-    }
+fn get_text(filename: &String) -> String {
+    extract_text(filename).expect("Failed to open PDF")
 }
 
 pub(crate) fn remove_title_from_code(line: &str) -> String {
     line.split_whitespace().next().unwrap().to_string()
 }
 
-fn get_filtered_codes(text: String, extension: &Extension) -> Vec<String> {
+fn get_filtered_codes(text: String) -> Vec<String> {
     let regex: Regex = Regex::new(r"^4\.\d+\.\d+\.\d+").unwrap();
 
     let codes_with_titles: Vec<String> = text
@@ -31,29 +21,16 @@ fn get_filtered_codes(text: String, extension: &Extension) -> Vec<String> {
         .map(|line: &str| line.to_string())
         .collect();
 
-    match extension {
-        Extension::Txt => codes_with_titles,
-        Extension::Pdf => codes_with_titles
-            .iter()
-            .map(|line: &String| remove_title_from_code(line))
-            .collect(),
-    }
+    codes_with_titles
+        .iter()
+        .map(|line: &String| remove_title_from_code(line))
+        .collect()
 }
 
 pub(crate) fn get_codes(filename: &String) -> Vec<String> {
-    let extension: Extension = {
-        let extension_str: &str = filename.split(".").last().unwrap();
+    let text: String = get_text(filename);
 
-        match extension_str {
-            "pdf" => Extension::Pdf,
-            "txt" => Extension::Txt,
-            _ => panic!("Invalid extension"),
-        }
-    };
-
-    let text: String = get_text(&extension, filename);
-
-    get_filtered_codes(text, &extension)
+    get_filtered_codes(text)
 }
 
 pub(crate) fn get_code_counts(codes: &[String]) -> Vec<(String, i32)> {
